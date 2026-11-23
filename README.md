@@ -22,6 +22,17 @@ httpOnly de sesión sea **mismo origen**. Para apuntar a otro backend:
 VITE_API_PROXY=http://localhost:8080 npm run dev
 ```
 
+## Acceso
+
+Además del correo y contraseña, el login ofrece **Continuar con Google**. El
+flujo completo vive en el backend (OAuth2 + PKCE y JWT en cookie httpOnly): este
+repo solo navega a `/api/auth/google` y muestra los errores `not_configured`,
+`oauth_failed` y `not_allowed`. Para activarlo hay que configurar
+`GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_REDIRECT_URI`,
+`ADMIN_URL` y `ADMIN_GOOGLE_EMAILS` en `backend/.env` del repo principal;
+consulta el contrato antes de tocar nada. **Nunca** pongas secretos de Google en
+este repo: solo variables `VITE_*`, que se incrustan en el bundle.
+
 ## Calidad
 
 ```bash
