@@ -4,7 +4,18 @@ import { ApiError } from "../lib/api";
 import { useAuth } from "../context/useAuth";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Field";
+import { SignInIcon } from "../components/ui/Icons";
 import { STORE_URL } from "../lib/config";
+
+/** Errores que el backend devuelve como query param tras el callback. */
+const ERRORES_OAUTH: Record<string, string> = {
+  not_allowed:
+    "Esa cuenta de Google no tiene acceso al panel. Pide que autoricen tu correo.",
+  not_configured:
+    "El acceso con Google aún no está configurado en el servidor. Usa tu correo y contraseña.",
+  oauth_failed:
+    "No pudimos verificar tu cuenta de Google. Inténtalo de nuevo o usa tu contraseña.",
+};
 
 /**
  * Login PROPIO del panel. No hay registro: las cuentas de administrador las
@@ -21,7 +32,12 @@ export function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [enviando, setEnviando] = useState(false);
 
-  const redirect = params.get("redirect") || "/";
+  // Solo aceptamos rutas relativas: ni el panel ni el backend pueden usarse
+  // como puente hacia un dominio externo (open redirect).
+  const destino = params.get("redirect") ?? "/";
+  const redirect = destino.startsWith("/") && !destino.startsWith("//") ? destino : "/";
+  const oauthError = params.get("error");
+  const googleUrl = `/api/auth/google?redirect=${encodeURIComponent(redirect)}`;
 
   if (!loading && user?.role === "ADMIN") {
     return <Navigate to={redirect} replace />;
@@ -96,6 +112,30 @@ export function LoginPage() {
             Entrar
           </Button>
         </form>
+
+        <div className="mt-8">
+          <div className="flex items-center gap-4" aria-hidden="true">
+            <span className="h-px flex-1 bg-tinta/10" />
+            <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-tibio">
+              o
+            </span>
+            <span className="h-px flex-1 bg-tinta/10" />
+          </div>
+
+          <a
+            href={googleUrl}
+            className="mt-5 inline-flex min-h-14 w-full items-center justify-center gap-3 bg-white px-6 text-sm font-semibold text-tinta transition-colors hover:bg-nude"
+          >
+            <SignInIcon className="size-5" />
+            Continuar con Google
+          </a>
+
+          {oauthError && (
+            <p role="alert" className="mt-3 bg-vino/10 px-4 py-3 text-sm text-vino">
+              {ERRORES_OAUTH[oauthError] ?? ERRORES_OAUTH.oauth_failed}
+            </p>
+          )}
+        </div>
 
         <a
           href={STORE_URL}

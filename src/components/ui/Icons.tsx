@@ -91,3 +91,12 @@ export function PencilIcon({ className }: Props) {
     </Svg>
   );
 }
+
+/** Entrada con cuenta externa: flecha hacia una puerta, sin marca ni color. */
+export function SignInIcon({ className }: Props) {
+  return (
+    <Svg className={className}>
+      <path d="M13.5 5H19v14h-5.5M4 12h10m-4-4 4 4-4 4" />
+    </Svg>
+  );
+}
