@@ -47,15 +47,15 @@ export interface Category {
 export interface ProductImage {
   url: string;
   alt: string;
-  /** Nota 20 del contrato (pendiente de backend): posición en la galería. */
+  /** Posición en la galería (contrato §6; se mapea a `position` en BD). */
   order?: number;
-  /** Nota 20: color asociado para filtrar fotos. */
+  /** Color asociado para filtrar fotos. */
   color?: string | null;
-  /** Nota 20: "image" | "video". Por ahora el panel solo gestiona imágenes. */
+  /** "image" | "video". Por ahora el panel solo gestiona imágenes. */
   type?: "image" | "video";
 }
 
-/** Nota 20 del contrato: ficha técnica libre, pendiente de backend. */
+/** Ficha técnica libre del producto (contrato §6). */
 export interface FichaTecnica {
   marca?: string;
   material?: string;
@@ -74,11 +74,11 @@ export interface Product {
   images: ProductImage[];
   rating?: number;
   reviewCount?: number;
-  /** Nota 20: visible en la tienda; el backend aún no lo expone. */
+  /** Visible en la tienda (se mapea a `isActive` en BD). */
   active?: boolean;
-  /** Nota 20: vigencia de la oferta. */
+  /** Vigencia de la oferta. */
   offerEndsAt?: string | null;
-  /** Nota 20: datos editoriales del producto. */
+  /** Datos editoriales del producto. */
   fichaTecnica?: FichaTecnica | null;
 }
 
@@ -95,7 +95,7 @@ export interface ProductVariant {
   name: string;
   price: number;
   stock: number;
-  /** Nota 20: talla/color se guardan en `name`/`color`; campos pendientes de backend. */
+  /** Talla/color: la talla va en `name` y el color en `color`. */
   color?: string | null;
   colorHex?: string | null;
   active?: boolean;
@@ -297,7 +297,7 @@ export interface ProductInput {
     colorHex?: string | null;
     active?: boolean;
   }>;
-  /** Campos opcionales de la nota 20; el backend los ignora hasta implementarlos. */
+  /** Campos opcionales del contrato §6 (ficha, oferta y visibilidad). */
   active?: boolean;
   offerEndsAt?: string | null;
   fichaTecnica?: FichaTecnica;

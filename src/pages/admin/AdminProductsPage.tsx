@@ -19,10 +19,8 @@ import { Toggle } from "../../components/ui/Toggle";
 
 /* ============================================================
    Admin › Productos — lista + formulario por secciones.
-   Contrato: POST/PATCH /api/admin/products (§6).
-   Los campos marcados "nota 20" son opcionales y están pedidos al
-   BACKEND en docs/api-contract.md; la UI los envía y degrada si el
-   servidor los ignora.
+   Contrato: POST/PATCH /api/admin/products (§6). Ficha técnica, oferta,
+   colores y visibilidad ya se guardan y se vuelven a leer del detalle.
    ============================================================ */
 
 interface VariantForm {
@@ -531,9 +529,6 @@ export function AdminProductsPage() {
                 Completa por secciones. Solo la información básica es obligatoria.
               </p>
             </div>
-            <p className="text-xs text-tibio">
-              Ficha técnica, colores y estado requieren la nota 20 del contrato.
-            </p>
           </div>
 
           <SectionCard title="Información básica" description="Nombre, URL y descripción que ve el cliente.">
