@@ -145,8 +145,6 @@ export function AdminOrdersPage() {
 
   useEffect(() => {
     let cancelled = false;
-    setError(null);
-    setOrders(null);
     api.admin
       .orders()
       .then((r) => {
@@ -161,11 +159,17 @@ export function AdminOrdersPage() {
     };
   }, [reloadKey]);
 
+  function recargar() {
+    setError(null);
+    setOrders(null);
+    setReloadKey((k) => k + 1);
+  }
+
   if (error) {
     return (
       <>
         <PageHeader title="Pedidos" />
-        <ErrorState message={error} onRetry={() => setReloadKey((k) => k + 1)} />
+        <ErrorState message={error} onRetry={recargar} />
       </>
     );
   }

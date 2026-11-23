@@ -25,7 +25,6 @@ export function AdminCategoriesPage() {
 
   useEffect(() => {
     let cancelled = false;
-    setError(null);
     api
       .categories()
       .then((c) => {
@@ -39,6 +38,11 @@ export function AdminCategoriesPage() {
       cancelled = true;
     };
   }, [reloadKey]);
+
+  function recargar() {
+    setError(null);
+    setReloadKey((k) => k + 1);
+  }
 
   const set = (key: keyof typeof form) => (e: { target: { value: string } }) =>
     setForm((f) => ({ ...f, [key]: e.target.value }));
@@ -65,7 +69,7 @@ export function AdminCategoriesPage() {
       setMsg({ texto: "Categoría creada.", ok: true });
       setForm({ name: "", slug: "", imageUrl: "" });
       setAbierto(false);
-      setReloadKey((k) => k + 1);
+      recargar();
     } catch (err) {
       setMsg({
         texto:
@@ -83,7 +87,7 @@ export function AdminCategoriesPage() {
     return (
       <>
         <PageHeader title="Categorías" />
-        <ErrorState message={error} onRetry={() => setReloadKey((k) => k + 1)} />
+        <ErrorState message={error} onRetry={recargar} />
       </>
     );
   }

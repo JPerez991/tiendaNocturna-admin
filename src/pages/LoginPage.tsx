@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { ApiError } from "../lib/api";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../context/useAuth";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Field";
 import { STORE_URL } from "../lib/config";

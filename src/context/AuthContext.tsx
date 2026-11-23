@@ -1,26 +1,7 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-  type ReactNode,
-} from "react";
-import { api, ApiError } from "../lib/api";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
+import { api } from "../lib/api";
 import type { LoginInput, RegisterInput, User } from "../lib/types";
-
-interface AuthContextValue {
-  user: User | null;
-  /** true mientras se verifica la sesión inicial con GET /api/auth/me */
-  loading: boolean;
-  login: (input: LoginInput) => Promise<User>;
-  register: (input: RegisterInput) => Promise<User>;
-  logout: () => Promise<void>;
-  refresh: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextValue | null>(null);
+import { AuthContext } from "./authStore";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
@@ -29,19 +10,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const refresh = useCallback(async () => {
     try {
       setUser(await api.auth.me());
-    } catch (err) {
-      // 401 = sin sesión; cualquier otro error también deja al usuario "fuera"
-      // pero no rompe la app.
-      if (err instanceof ApiError && err.statusCode === 401) setUser(null);
-      else setUser(null);
+    } catch {
+      // Sin sesión (401) o error de red: el usuario queda "fuera" sin romper la app.
+      setUser(null);
     } finally {
       setLoading(false);
     }
   }, []);
 
   useEffect(() => {
-    void refresh();
-  }, [refresh]);
+    let cancelled = false;
+    // Hidratación inicial: solo la sesión, sin tocar el resto de la app.
+    api.auth
+      .me()
+      .then((u) => {
+        if (!cancelled) {
+          setUser(u);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setUser(null);
+          setLoading(false);
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const login = useCallback(async (input: LoginInput) => {
     const reducido = await api.auth.login(input);
@@ -82,8 +79,3 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
-export function useAuth(): AuthContextValue {
-  const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth debe usarse dentro de <AuthProvider>");
-  return ctx;
-}

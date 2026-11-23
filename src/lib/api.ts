@@ -14,6 +14,8 @@ import type {
   OrderDetail,
   OrderStatus,
   PaymentConfirmResponse,
+  QuestionFilter,
+  QuestionHistoryEntry,
   PaymentMethod,
   PayResponse,
   Product,
@@ -167,6 +169,13 @@ export const api = {
       patch<AdminQuestion>(`/api/admin/questions/${id}`, { answer }),
     // El contrato NO lista GET /api/admin/questions; lo pido en las notas.
     // Si devuelve 404, la UI muestra "módulo no disponible" sin romperse.
-    questions: () => get<AdminQuestion[]>("/api/admin/questions"),
+    // `?status=` también está solicitado en la nota 20 (por defecto ALL).
+    questions: (status: QuestionFilter = "ALL") =>
+      get<AdminQuestion[]>(`/api/admin/questions${qs({ status: status === "ALL" ? undefined : status })}`),
+    /** Nota 20: borrado lógico; si el backend devuelve 404, la UI lo avisa. */
+    deleteQuestion: (id: string) => del<void>(`/api/admin/questions/${id}`),
+    /** Nota 20: historial de ediciones; si no existe, la UI oculta el botón. */
+    questionHistory: (id: string) =>
+      get<QuestionHistoryEntry[]>(`/api/admin/questions/${id}/history`),
   },
 };

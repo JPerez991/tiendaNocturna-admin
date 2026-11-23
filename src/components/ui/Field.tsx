@@ -1,4 +1,8 @@
-import type { InputHTMLAttributes, SelectHTMLAttributes } from "react";
+import type {
+  InputHTMLAttributes,
+  SelectHTMLAttributes,
+  TextareaHTMLAttributes,
+} from "react";
 
 interface FieldProps {
   label: string;
@@ -73,6 +77,43 @@ export function Select({
       </select>
       {error && (
         <p className="mt-1 text-xs font-medium text-vino">{error}</p>
+      )}
+    </div>
+  );
+}
+
+/** Textarea con la misma voz que Input/Select (label, pista y error). */
+export function Textarea({
+  label,
+  error,
+  hint,
+  id,
+  className = "",
+  ...rest
+}: FieldProps & TextareaHTMLAttributes<HTMLTextAreaElement>) {
+  return (
+    <div className={className}>
+      <label htmlFor={id} className="mb-1.5 block text-sm font-semibold text-carbon">
+        {label}
+      </label>
+      <textarea
+        id={id}
+        aria-invalid={!!error}
+        aria-describedby={error ? `${id}-error` : hint ? `${id}-hint` : undefined}
+        className={`w-full border bg-white px-4 py-3 text-carbon transition-colors placeholder:text-tibio/60 ${
+          error ? "border-vino" : "border-tibio/30"
+        }`}
+        {...rest}
+      />
+      {hint && !error && (
+        <p id={`${id}-hint`} className="mt-1 text-xs text-tibio">
+          {hint}
+        </p>
+      )}
+      {error && (
+        <p id={`${id}-error`} className="mt-1 text-xs font-medium text-vino">
+          {error}
+        </p>
       )}
     </div>
   );

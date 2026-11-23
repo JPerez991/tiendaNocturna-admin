@@ -96,3 +96,34 @@ body {
 .tabla-scroll::-webkit-scrollbar-thumb {
   background: color-mix(in srgb, var(--color-acento) 40%, transparent);
 }
+
+/* Superficies del navegador que también son parte del diseño. */
+dialog::backdrop {
+  background: color-mix(in srgb, var(--color-noir) 62%, transparent);
+}
+
+input,
+textarea,
+select {
+  caret-color: var(--color-tinta);
+}
+
+/* El selector nativo de color es la única excepción a las esquinas rectas. */
+input[type="color"] {
+  border-radius: 0;
+  cursor: pointer;
+}
+
+/* Tablas numéricas: cifras alineadas, como corresponde a un back-office. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

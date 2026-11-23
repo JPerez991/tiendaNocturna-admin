@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from "react";
 import { NavLink, Navigate, useLocation, useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/useAuth";
 import { Spinner } from "../ui/States";
 import { STORE_URL } from "../../lib/config";
 
@@ -158,7 +158,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
           <div className="flex items-center gap-4">
             <a
               href={STORE_URL}
-              className="text-[10px] font-semibold uppercase tracking-[0.18em] text-crema/70"
+              className="inline-flex min-h-11 items-center text-[10px] font-semibold uppercase tracking-[0.18em] text-crema/70"
             >
               Tienda
             </a>
@@ -166,7 +166,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
               type="button"
               onClick={() => void handleLogout()}
               disabled={saliendo}
-              className="text-[10px] font-semibold uppercase tracking-[0.18em] text-crema/70 disabled:opacity-50"
+              className="inline-flex min-h-11 items-center text-[10px] font-semibold uppercase tracking-[0.18em] text-crema/70 disabled:opacity-50"
             >
               Salir
             </button>

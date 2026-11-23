@@ -47,6 +47,21 @@ export interface Category {
 export interface ProductImage {
   url: string;
   alt: string;
+  /** Nota 20 del contrato (pendiente de backend): posición en la galería. */
+  order?: number;
+  /** Nota 20: color asociado para filtrar fotos. */
+  color?: string | null;
+  /** Nota 20: "image" | "video". Por ahora el panel solo gestiona imágenes. */
+  type?: "image" | "video";
+}
+
+/** Nota 20 del contrato: ficha técnica libre, pendiente de backend. */
+export interface FichaTecnica {
+  marca?: string;
+  material?: string;
+  genero?: string;
+  tipoArticulo?: string;
+  atributos?: Record<string, string>;
 }
 
 export interface Product {
@@ -59,6 +74,12 @@ export interface Product {
   images: ProductImage[];
   rating?: number;
   reviewCount?: number;
+  /** Nota 20: visible en la tienda; el backend aún no lo expone. */
+  active?: boolean;
+  /** Nota 20: vigencia de la oferta. */
+  offerEndsAt?: string | null;
+  /** Nota 20: datos editoriales del producto. */
+  fichaTecnica?: FichaTecnica | null;
 }
 
 export interface ProductListResponse {
@@ -74,6 +95,10 @@ export interface ProductVariant {
   name: string;
   price: number;
   stock: number;
+  /** Nota 20: talla/color se guardan en `name`/`color`; campos pendientes de backend. */
+  color?: string | null;
+  colorHex?: string | null;
+  active?: boolean;
 }
 
 /** Detalle de producto: el contrato indica que agrega variants[]. */
@@ -263,7 +288,19 @@ export interface ProductInput {
   compareAtPrice?: number | null;
   categoryId: string;
   images?: ProductImage[];
-  variants: Array<{ sku: string; name: string; price: number; stock: number }>;
+  variants: Array<{
+    sku: string;
+    name: string;
+    price: number;
+    stock: number;
+    color?: string | null;
+    colorHex?: string | null;
+    active?: boolean;
+  }>;
+  /** Campos opcionales de la nota 20; el backend los ignora hasta implementarlos. */
+  active?: boolean;
+  offerEndsAt?: string | null;
+  fichaTecnica?: FichaTecnica;
 }
 
 /** Body para crear categorías. */
@@ -273,7 +310,8 @@ export interface CategoryInput {
   imageUrl?: string;
 }
 
-export type QuestionStatus = "PENDING" | "ANSWERED";
+export type QuestionStatus = "PENDING" | "ANSWERED" | "DELETED";
+export type QuestionFilter = "ALL" | "PENDING" | "ANSWERED" | "DELETED";
 
 /** Pregunta de cliente a responder por el admin. */
 export interface AdminQuestion {
@@ -284,4 +322,17 @@ export interface AdminQuestion {
   createdAt: string;
   product: { id: string; name: string; slug: string };
   user?: { firstName: string };
+  /** Nota 20 (pendiente de backend): auditoría/edición/borrado lógico. */
+  email?: string;
+  answeredByName?: string;
+  updatedAt?: string;
+  deletedAt?: string;
+  deletedBy?: string;
+}
+
+/** Nota 20: versión anterior de una pregunta o respuesta. */
+export interface QuestionHistoryEntry {
+  campo: "question" | "answer";
+  textoAnterior: string;
+  editadoEn?: string;
 }
