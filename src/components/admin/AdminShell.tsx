@@ -2,6 +2,7 @@ import { useState, type ReactNode } from "react";
 import { NavLink, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/useAuth";
 import { Spinner } from "../ui/States";
+import { PanelLabel } from "./PanelLabel";
 import { STORE_URL } from "../../lib/config";
 
 /**
@@ -12,9 +13,14 @@ import { STORE_URL } from "../../lib/config";
  * backend sigue exigiendo rol ADMIN en cada endpoint.
  */
 
-const SECCIONES = [
+// Solo dos niveles de gestión. Categorías y preguntas son herramientas del
+// catálogo, por eso viven debajo de Productos en lugar de competir con pedidos.
+const PRINCIPALES = [
   { to: "/", end: true, label: "Pedidos" },
   { to: "/productos", label: "Productos" },
+];
+
+const SUBSECCIONES = [
   { to: "/categorias", label: "Categorías" },
   { to: "/preguntas", label: "Preguntas" },
 ];
@@ -96,18 +102,13 @@ export function AdminShell({ children }: { children: ReactNode }) {
     <div className="min-h-screen bg-crema lg:pl-60">
       {/* ---------- Barra lateral (escritorio) ---------- */}
       <aside className="sidebar fixed inset-y-0 left-0 hidden w-60 flex-col bg-tinta text-crema lg:flex">
-        <div className="border-b border-crema/10 px-6 py-6">
-          <p className="font-banner text-lg tracking-[0.28em] text-crema">
-            NOCTURNA
-          </p>
-          <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.22em] text-crema/45">
-            Panel de administración
-          </p>
+        <div className="border-b border-crema/10 px-6 py-5">
+          <PanelLabel className="text-crema" />
         </div>
 
         <nav aria-label="Secciones del panel" className="flex-1 px-3 py-5">
           <ul className="space-y-0.5">
-            {SECCIONES.map((s) => (
+            {PRINCIPALES.map((s) => (
               <li key={s.to}>
                 <NavLink
                   to={s.to}
@@ -124,6 +125,26 @@ export function AdminShell({ children }: { children: ReactNode }) {
                 </NavLink>
               </li>
             ))}
+            <li>
+              <ul className="ml-4 space-y-0.5 border-l border-crema/15 pl-2">
+                {SUBSECCIONES.map((s) => (
+                  <li key={s.to}>
+                    <NavLink
+                      to={s.to}
+                      className={({ isActive }) =>
+                        `flex min-h-11 items-center px-3 text-[13px] transition-colors ${
+                          isActive
+                            ? "bg-crema font-semibold text-tinta"
+                            : "text-crema/60 hover:bg-crema/10 hover:text-crema"
+                        }`
+                      }
+                    >
+                      {s.label}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </li>
           </ul>
         </nav>
 
@@ -154,7 +175,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
       {/* ---------- Cabecera y navegación (móvil) ---------- */}
       <header className="sidebar sticky top-0 z-20 bg-tinta text-crema lg:hidden">
         <div className="flex items-center justify-between gap-3 px-4 py-3">
-          <p className="font-banner text-base tracking-[0.26em]">NOCTURNA</p>
+          <PanelLabel className="text-crema" />
           <div className="flex items-center gap-4">
             <a
               href={STORE_URL}
@@ -174,7 +195,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
         </div>
         <nav aria-label="Secciones del panel" className="overflow-x-auto">
           <ul className="flex gap-1 px-2 pb-2">
-            {SECCIONES.map((s) => (
+            {PRINCIPALES.map((s) => (
               <li key={s.to}>
                 <NavLink
                   to={s.to}
@@ -184,6 +205,25 @@ export function AdminShell({ children }: { children: ReactNode }) {
                       isActive
                         ? "bg-crema text-tinta"
                         : "text-crema/70 hover:text-crema"
+                    }`
+                  }
+                >
+                  {s.label}
+                </NavLink>
+              </li>
+            ))}
+            {SUBSECCIONES.map((s, i) => (
+              <li
+                key={s.to}
+                className={i === 0 ? "ml-2 border-l border-crema/20 pl-2" : ""}
+              >
+                <NavLink
+                  to={s.to}
+                  className={({ isActive }) =>
+                    `flex min-h-11 shrink-0 items-center px-3 text-[13px] transition-colors ${
+                      isActive
+                        ? "bg-crema font-semibold text-tinta"
+                        : "text-crema/60 hover:text-crema"
                     }`
                   }
                 >

@@ -5,6 +5,7 @@ import { useAuth } from "../context/useAuth";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Field";
 import { SignInIcon } from "../components/ui/Icons";
+import { PanelLabel } from "../components/admin/PanelLabel";
 import { STORE_URL } from "../lib/config";
 
 /** Errores que el backend devuelve como query param tras el callback. */
@@ -69,7 +70,7 @@ export function LoginPage() {
   return (
     <div className="flex min-h-screen flex-col bg-crema">
       <div className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center px-4 py-12">
-        <p className="font-banner text-xl tracking-[0.3em] text-tinta">NOCTURNA</p>
+        <PanelLabel className="text-tinta" />
         <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-tibio">
           Panel de administración
         </p>
